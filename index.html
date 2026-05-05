@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VectorDAQ Testlab</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand-block">
+          <span class="brand-mark"></span>
+          <div>
+            <strong>VectorDAQ Testlab</strong>
+            <span>NVH Acquisition / Order Analysis / Modal Capture</span>
+          </div>
+        </div>
+        <nav class="toolbar" aria-label="Acquisition controls">
+          <button title="Open project">OPEN</button>
+          <button title="Arm acquisition" class="armed">ARM</button>
+          <button title="Start run">RUN</button>
+          <button title="Pause stream">HOLD</button>
+          <button title="Export report">EXPORT</button>
+        </nav>
+        <div class="system-strip">
+          <span>DAQ-42-SYNC</span>
+          <span>48.0 kHz</span>
+          <span>32 CH</span>
+          <span class="status-ok">LOCKED</span>
+        </div>
+      </header>
+
+      <aside class="left-pane">
+        <div class="pane-title">
+          <span>Project Explorer</span>
+          <small>Run Matrix</small>
+        </div>
+        <div class="tree">
+          <div class="tree-row root open">▾ PT-812 Compressor Bench</div>
+          <div class="tree-row indent open">▾ Campaign_2026_05_03</div>
+          <div class="tree-row indent2 selected">▣ Run_042 / coast-up 600-7200 rpm</div>
+          <div class="tree-row indent3">CH01 ICP Accel X - Bearing DE</div>
+          <div class="tree-row indent3">CH02 ICP Accel Y - Bearing DE</div>
+          <div class="tree-row indent3 active">CH03 ICP Accel Z - Bearing DE</div>
+          <div class="tree-row indent3">CH04 Tacho Optical 60 ppr</div>
+          <div class="tree-row indent3">CH05 Microphone Nearfield A</div>
+          <div class="tree-row indent3">CH06 Microphone Farfield B</div>
+          <div class="tree-row indent2">▣ Run_041 / thermal hold</div>
+          <div class="tree-row indent2">▣ Run_040 / baseline idle</div>
+          <div class="tree-row indent open">▾ Geometry</div>
+          <div class="tree-row indent2">Node set: casing radial 128 pts</div>
+          <div class="tree-row indent2">Coordinate frame: ISO 1940</div>
+          <div class="tree-row indent open">▾ Processing Chains</div>
+          <div class="tree-row indent2">FFT 8192 / Hann / 66.7% overlap</div>
+          <div class="tree-row indent2">Order map: 0.25 order resolution</div>
+          <div class="tree-row indent2">Waterfall smoothing: 3 slice median</div>
+        </div>
+
+        <div class="compact-table">
+          <div class="table-head">Channel Health</div>
+          <div><span>CH01</span><b>99.8%</b><i>2.41 mV/g</i></div>
+          <div><span>CH02</span><b>99.7%</b><i>2.38 mV/g</i></div>
+          <div><span>CH03</span><b>99.9%</b><i>2.43 mV/g</i></div>
+          <div><span>TACH</span><b>PLL</b><i>0.03% jitter</i></div>
+          <div><span>CAN</span><b>OK</b><i>1 Mbit/s</i></div>
+        </div>
+      </aside>
+
+      <main class="work-area">
+        <section class="chart-header">
+          <div>
+            <h1>RPM-Frequency-Amplitude Waterfall</h1>
+            <p>Run_042 / CH03 Bearing DE Z / synchronized tachometer order map</p>
+          </div>
+          <div class="chart-readouts">
+            <span>RPM <b id="rpmReadout">4,820</b></span>
+            <span>FREQ <b id="freqReadout">1,386.0 Hz</b></span>
+            <span>AMP <b id="ampReadout">-18.4 dB g</b></span>
+          </div>
+        </section>
+
+        <section class="chart-frame">
+          <div id="waterfallMount" class="waterfall-mount" aria-label="3D waterfall chart"></div>
+          <div class="chart-overlay">
+            <div class="axis-label axis-rpm">RPM / Time Slice</div>
+            <div class="axis-label axis-frequency">Frequency Hz</div>
+            <div class="axis-label axis-amplitude">Amplitude dB g</div>
+            <div class="cursor-tag" id="cursorTag">slice 074 | order 3.00 | -18.4 dB</div>
+          </div>
+          <div class="legend">
+            <span>-72</span>
+            <i></i>
+            <span>-6 dB</span>
+          </div>
+        </section>
+
+        <section class="lower-grid">
+          <div class="scope-panel">
+            <div class="panel-cap">Order Slice Peaks</div>
+            <canvas id="miniSpectrum" width="820" height="116"></canvas>
+          </div>
+          <div class="event-panel">
+            <div class="panel-cap">Event Log</div>
+            <div class="event-row"><span>12:41:08.312</span><b>Tracking PLL converged</b><i>residual 0.018 order</i></div>
+            <div class="event-row"><span>12:41:11.904</span><b>3rd order ridge exceeds limit</b><i>+4.2 dB over ref</i></div>
+            <div class="event-row"><span>12:41:15.772</span><b>Coherence gate active</b><i>0.94 avg</i></div>
+          </div>
+        </section>
+      </main>
+
+      <aside class="right-pane">
+        <div class="pane-title">
+          <span>Analysis Values</span>
+          <small>Live cursor</small>
+        </div>
+
+        <div class="metric-stack">
+          <div class="metric"><label>RMS Accel</label><strong id="rmsMetric">2.184 g</strong><span>ISO 10816 band</span></div>
+          <div class="metric"><label>Peak Hold</label><strong id="peakMetric">8.73 g</strong><span>crest 4.01</span></div>
+          <div class="metric"><label>Overall SPL</label><strong>92.4 dBA</strong><span>nearfield mic A</span></div>
+          <div class="metric"><label>Tacho RPM</label><strong id="rpmMetric">4820.0</strong><span>PLL locked</span></div>
+        </div>
+
+        <div class="dense-readout">
+          <div class="table-head">Order Tracking</div>
+          <p><span>fundamental</span><b>80.333 Hz</b></p>
+          <p><span>order cursor</span><b id="orderMetric">17.25x</b></p>
+          <p><span>bandwidth</span><b>5.859 Hz</b></p>
+          <p><span>window</span><b>Hann / 8192</b></p>
+          <p><span>overlap</span><b>66.7%</b></p>
+          <p><span>avg mode</span><b>exp 0.82</b></p>
+          <p><span>coherence</span><b>0.947</b></p>
+        </div>
+
+        <div class="dense-readout cursor-readout">
+          <div class="table-head">Cursor Coordinates</div>
+          <p><span>x rpm</span><b id="xMetric">4820.0</b></p>
+          <p><span>y freq</span><b id="yMetric">1386.0 Hz</b></p>
+          <p><span>z amp</span><b id="zMetric">-18.4 dB</b></p>
+          <p><span>slice</span><b id="sliceMetric">074</b></p>
+          <p><span>delta ref</span><b>+6.2 dB</b></p>
+          <p><span>marker</span><b>BEARING_DE_Z</b></p>
+        </div>
+
+        <div class="limit-panel">
+          <div class="panel-cap">Limit State</div>
+          <div class="limit-line warn"><span>3.00x order</span><b>WARN</b></div>
+          <div class="limit-line"><span>Blade pass 9.00x</span><b>NOM</b></div>
+          <div class="limit-line hot"><span>1.00x runout</span><b>TRIP-12%</b></div>
+        </div>
+      </aside>
+
+      <footer class="statusbar">
+        <span>Recorder: streaming ring buffer 00:11:42.180</span>
+        <span>Analyzer load 42%</span>
+        <span>Temp 23.8 C</span>
+        <span>Calibration expires 2026-11-18</span>
+      </footer>
+    </div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
