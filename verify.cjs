@@ -45,9 +45,9 @@ function analyzePng(buffer) {
 
   const chartBox = await page.locator(".chart-frame").boundingBox();
   const canvasBox = await page.locator("#waterfallMount canvas").boundingBox();
-  const desktopShot = await page.screenshot({ path: "industrial-daq-ui/verification-desktop.png", fullPage: true });
+  const desktopShot = await page.screenshot({ path: "verification-desktop.png", fullPage: true });
   const chartShot = await page.screenshot({ clip: chartBox });
-  writeFileSync("industrial-daq-ui/verification-chart.png", chartShot);
+  writeFileSync("verification-chart.png", chartShot);
   const chartStats = analyzePng(chartShot);
 
   const sceneState = await page.evaluate(() => {
@@ -67,7 +67,7 @@ function analyzePng(buffer) {
   await mobile.goto(url, { waitUntil: "networkidle" });
   await mobile.waitForSelector("#waterfallMount canvas");
   await mobile.waitForTimeout(700);
-  await mobile.screenshot({ path: "industrial-daq-ui/verification-mobile.png", fullPage: true });
+  await mobile.screenshot({ path: "verification-mobile.png", fullPage: true });
   const mobileState = await mobile.evaluate(() => {
     const canvas = document.querySelector("#waterfallMount canvas");
     const overflow = [...document.querySelectorAll("button, .metric, .chart-readouts span")]
